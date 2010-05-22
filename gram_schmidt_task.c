@@ -72,7 +72,7 @@ int main(int argc, char** argv){
 #pragma omp single
       {
 	for(i=0;i<col;i++){
-#pragma omp task private(j, sigma, k, temp_norm)
+#pragma omp task private(j, sigma, k, temp_norm) firstprivate(i)
 	  {
 	    temp_norm = norm(v,i,row);
 	    for (k=0; k<row; k++)
