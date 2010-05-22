@@ -1,0 +1,30 @@
+\chapter{Solution method}
+
+The program take two argument, the row and the col.
+
+\begin{verbatim}
+test the argument
+
+for i in column
+    tmp = norm (v, i, row)
+
+	 for k in row
+        q[k][i] = v[k][i]/tmp
+
+    for j from i+1 in col
+        sigma = scalar_product(q,i,v,j,row)
+        for k in row
+            v[k][j] -= sigma*q[k][i]
+\end{verbatim}
+
+For the direct parallelization we parallelize the for:
+\begin{verbatim}
+for j from i+1 in col
+\end{verbatim}
+
+In the task parallelization we use \verb+#pragma omp single+ before the first loop:
+\begin{verbatim}
+for i in column
+\end{verbatim}
+
+and we add the task directive \verb+ #pragma omp task private(j, sigma, k, temp_norm)+ in the \verb+for i in column+ loop.

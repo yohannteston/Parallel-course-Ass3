@@ -4,7 +4,7 @@
 # For each size and each number of thread launch 20 times
 # the program and keep the least time.
 
-[10,100,300,500,600,800,1000,2000,3000,4000,5000].each_with_index do |size, i|
+[10,100,300,600,800,1000,1500,2000].each_with_index do |size, i|
 	if (i > 0)
 		puts "\n\n";
 	end
@@ -16,7 +16,7 @@
 		min_time = 10000000000 ;
 
 		ENV['OMP_NUM_THREADS'] = "#{n}" ;
-		20.times {
+		10.times {
 			system "export OMP_NUM_THREAD=#{n}"
 			out = `./gram_schmidt_task #{size} #{size}` 
 			out_split = out.split " " ;

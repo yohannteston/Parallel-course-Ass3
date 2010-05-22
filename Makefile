@@ -1,5 +1,7 @@
 CC	= gcc   
-CFLAGS    =  -O3 -fopenmp -g 
+CC2	= /opt/SUNWspro-12u1/bin/cc
+CFLAGS    =  -O3 -fopenmp  
+CFLAGS2 = -O3 -xopenmp  
 LIBS 	= -lm
 
 all: gram_schmidt gram_schmidt_task
