@@ -67,20 +67,25 @@ int main(int argc, char** argv){
   // compute
   ttime=timer();
 
-  
-  for(i=0;i<col;i++){
-  {
-    temp_norm = norm(v,i,row);
-    for (k=0; k<row; k++)
-      q[k][i] = v[k][i]/temp_norm;
-#pragma omp parallel for private(temp_norm, k, j, sigma)
-    for(j=i+1;j<col;j++){
-      sigma = scalar_product(q,i, v, j,row);
-      for(k=0;k<row;k++)
-	v[k][j] -=sigma*q[k][i];
+#pragma omp parallel
+    {
+#pragma omp single
+      {
+	for(i=0;i<col;i++){
+#pragma omp task private(j, sigma, k, temp_norm)
+	  {
+	    temp_norm = norm(v,i,row);
+	    for (k=0; k<row; k++)
+	      q[k][i] = v[k][i]/temp_norm;
+	    for(j=i+1;j<col;j++){
+	      sigma = scalar_product(q,i, v, j,row);
+	      for(k=0;k<row;k++)
+		v[k][j] -=sigma*q[k][i];
+	    }
+	  }
+	}
+      }
     }
-  }
-  }
   ttime=timer()-ttime;
   printf("Time: %f \n",ttime/1000000.0);
   //printf("Check orthogonality: %e \n",scalar_product(q,col/2,  q,col/3, row));
