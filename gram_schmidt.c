@@ -1,4 +1,4 @@
-//#include <omp.h>
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -26,18 +26,6 @@ void init(double** array, int row, int col){
 	for(i=0;i<row;i++)
 		for(j=0;j<col;j++)
 			array[i][j] = (double)rand();
-}
-
-double scalar_product(double** q, int i,  double** v, int j, int row){
-	int k;
-	double sum = 0.0;
-	for(k=0;k<row;k++)
-		sum+= q[k][i] * v[k][j];
-	return sum;
-}
-
-double norm(double** v, int i, int row){
-	return sqrt(scalar_product(v,i,v,i,row));
 }
 
 
@@ -74,8 +62,13 @@ int main(int argc, char** argv){
 	double temp_norm, sigma;
 
 	int row = atoi(argv[1]);
-	int col = row;
-	//int col = atoi(argv[2]);
+	//int col = row;
+	int col = atoi(argv[2]);
+
+	if(row < col){
+		printf("It is not possible to create an orthogonal base with such values. \n");
+		exit(-1);
+	}		
 
 	int k,i,j,ttime;
 
@@ -90,21 +83,23 @@ int main(int argc, char** argv){
 	ttime=timer();
 
 
-	for(i=0;i<col;i++){
-
-		temp_norm = vecNorm(v[i],row);
-		for (k=0; k<row; k++)
-			q[k][i] = v[k][i]/temp_norm;
-
-		//#pragma omp parallel for private(temp_norm, k, j, sigma)
-		for(j=i+1;j<col;j++){
-			sigma = scalarProd(q[i], v[j], row);
-			for(k=0;k<row;k++)
-				v[k][j] -=sigma*q[k][i];
+	for(i=0;i<row;i++){
+		temp_norm = vecNorm(v[i],col);
+		for (k=0; k<col; k++)
+			q[i][k] = v[i][k]/temp_norm;
+		#pragma omp parallel for private(temp_norm, k, j, sigma)
+		for(j=i+1;j<row;j++){
+			sigma = scalarProd(q[i], v[j], col);
+			for(k=0;k<col;k++)
+				v[j][k] -=sigma*q[i][k];
 		}
 	}
+
+
+
+
 	ttime=timer()-ttime;
 	printf("Time: %f \n",ttime/1000000.0);
-	//printf("Check orthogonality: %e \n",scalar_product(q,col/2,  q,col/3, row));
+	printf("Check orthogonality: %e \n",scalarProd(q[col/2],  q[col/3], row));
 
 }

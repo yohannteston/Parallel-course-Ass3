@@ -28,16 +28,26 @@ void init(double** array, int row, int col){
 			array[i][j] = (double)rand();
 }
 
-double scalar_product(double** q, int i,  double** v, int j, int row){
-	int k;
-	double sum = 0.0;
-	for(k=0;k<row;k++)
-		sum+= q[k][i] * v[k][j];
-	return sum;
+
+double vecNorm(double *vec,int n){
+	int i;
+	double local_norm = 0;
+
+	for(i=0;i<n;i++){
+		local_norm+= (vec[i]*vec[i]);
+	}
+	return sqrt(local_norm);
 }
 
-double norm(double** v, int i, int row){
-	return sqrt(scalar_product(v,i,v,i,row));
+double scalarProd(double *a,double *b,int n){
+	int i;
+	double scalar =0.0;
+
+	for(i=0;i<n;i++){
+		scalar +=a[i]*b[i];
+	}
+
+	return scalar;
 }
 
 
@@ -52,8 +62,13 @@ int main(int argc, char** argv){
 	double temp_norm, sigma;
 
 	int row = atoi(argv[1]);
-	int col = row;
-	//int col = atoi(argv[2]);
+	//int col = row;
+	int col = atoi(argv[2]);
+
+	if(row < col){
+		printf("It is not possible to create an orthogonal base with such values. \n");
+		exit(-1);
+	}		
 
 	int k,i,j,ttime;
 
@@ -68,25 +83,27 @@ int main(int argc, char** argv){
 	ttime=timer();
 
 #pragma omp parallel
-	{
+{
 #pragma omp single
-<<<<<<< HEAD
-      {
-	for(i=0;i<col;i++){
-#pragma omp task private(j, sigma, k, temp_norm) firstprivate(i)
-	  {
-	    temp_norm = norm(v,i,row);
-	    for (k=0; k<row; k++)
-	      q[k][i] = v[k][i]/temp_norm;
-	    for(j=i+1;j<col;j++){
-	      sigma = scalar_product(q,i, v, j,row);
-	      for(k=0;k<row;k++)
-		v[k][j] -=sigma*q[k][i];
-	    }
-	  }
+	{
+		for(i=0;i<row;i++){
+#pragma omp task private(temp_norm,k,j, sigma) firstprivate(i)
+			{		
+				temp_norm = vecNorm(v[i],col);
+				for (k=0; k<col; k++)
+				q[i][k] = v[i][k]/temp_norm;
+				for(j=i+1;j<row;j++){
+					sigma = scalarProd(q[i], v[j], col);
+					for(k=0;k<col;k++)
+						v[j][k] -=sigma*q[i][k];
+				}
+			}
+		}
 	}
+}
+
 	ttime=timer()-ttime;
 	printf("Time: %f \n",ttime/1000000.0);
-	//printf("Check orthogonality: %e \n",scalar_product(q,col/2,  q,col/3, row));
+	printf("Check orthogonality: %e \n",scalarProd(q[col/2],  q[col/3], row));
 
 }

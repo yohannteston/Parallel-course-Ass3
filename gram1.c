@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 
 	ttime=timer()-ttime;
    printf("Time: %f\n",ttime/1000000.0);
-	//printf("Check orthogonality: %e \n",scalarProd(Q[n/2], Q[n/3], n));
+	printf("Check orthogonality: %e \n",scalarProd(Q[n/2], Q[n/3], n));
 	
    return 0;
    
