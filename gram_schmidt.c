@@ -1,4 +1,4 @@
-#include <omp.h>
+//#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -41,6 +41,28 @@ double norm(double** v, int i, int row){
 }
 
 
+double vecNorm(double *vec,int n){
+	int i;
+	double local_norm = 0;
+
+	for(i=0;i<n;i++){
+		local_norm+= (vec[i]*vec[i]);
+	}
+	return sqrt(local_norm);
+}
+
+double scalarProd(double *a,double *b,int n){
+	int i;
+	double scalar =0.0;
+
+	for(i=0;i<n;i++){
+		scalar +=a[i]*b[i];
+	}
+
+	return scalar;
+}
+
+
 int main(int argc, char** argv){
 	if(argc != 3){
 		printf("Usage: ./gram_schmidt vector_length number_of_vectors\n");
@@ -69,16 +91,16 @@ int main(int argc, char** argv){
 
 
 	for(i=0;i<col;i++){
-		{
-			temp_norm = norm(v,i,row);
-			for (k=0; k<row; k++)
-				q[k][i] = v[k][i]/temp_norm;
-#pragma omp parallel for private(temp_norm, k, j, sigma)
-			for(j=i+1;j<col;j++){
-				sigma = scalar_product(q,i, v, j,row);
-				for(k=0;k<row;k++)
-					v[k][j] -=sigma*q[k][i];
-			}
+
+		temp_norm = vecNorm(v[i],row);
+		for (k=0; k<row; k++)
+			q[k][i] = v[k][i]/temp_norm;
+
+		//#pragma omp parallel for private(temp_norm, k, j, sigma)
+		for(j=i+1;j<col;j++){
+			sigma = scalarProd(q[i], v[j], row);
+			for(k=0;k<row;k++)
+				v[k][j] -=sigma*q[k][i];
 		}
 	}
 	ttime=timer()-ttime;

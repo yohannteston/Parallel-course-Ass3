@@ -10,5 +10,7 @@
   \label{fig:gram_speedup}
 \end{figure} 
 
+As usual with very small matrix there is absolutely no speedup. The first speedup is obtain with a matrix of $300\times 300$ but it's decrease immediately below 1. Matrix from $600\times 600$ to $1000\times 1000$ follow the same pattern with a big speedup for a low number of thread (8) and a decrease just after. $1500\times 1500$ matrix have an odd speedup with 64 threads.
 
+Finally the $2000\times 2000$ matrix have the max speedup for 16 threads and slowly decrease, after but stay on top of the other speedup. This is because the ratio data/overhead is bigger for the same number of thread, so there is relatively less overhead.
 
