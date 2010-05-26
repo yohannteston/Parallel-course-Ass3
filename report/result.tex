@@ -1,6 +1,6 @@
 \chapter{Results and discussion}
 
-\section{Direct Gram-Schmidt orthogonalization}
+\section{Gram-Schmidt orthogonalization using the \textit{for} directive}
 
 \begin{figure}[ht]
   \begin{center}
@@ -14,12 +14,22 @@ As usual with very small matrices there is absolutely no speedup. The first spee
 
 Finally, the $2000\times 2000$ matrix has the max speedup for 16 threads and slowly decreases just after but stays on top of the other speedups. This is because the ratio data/overhead is better for the same number of threads, so there is relatively less overhead.
 
+\section{Gram-Schmidt orthogonalization using the \textit{task} directive}
+
 \begin{figure}[ht]
   \begin{center}
          \resizebox{160mm}{!}{\includegraphics{pic/graph_task.eps}}
   \end{center}
   \caption{Gram-Schmidt speedup using tasks}
   \label{fig:gram_speedup_task}
+\end{figure} 
+
+\begin{figure}[ht]
+  \begin{center}
+         \resizebox{160mm}{!}{\includegraphics{pic/graph_task_2.eps}}
+  \end{center}
+  \caption{Gram-Schmidt speedup using tasks}
+  \label{fig:gram_speedup_task_2}
 \end{figure} 
 
 

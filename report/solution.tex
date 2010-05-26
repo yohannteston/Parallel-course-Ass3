@@ -1,9 +1,9 @@
 \chapter{Solution method}
 
-The program take two argument, the row and the col.
+The program takes two arguments, the length of a vector et their number.
 
 \begin{verbatim}
-test the argument
+test the arguments
 
 for i in column
     tmp = norm (v, i, row)
@@ -17,14 +17,17 @@ for i in column
             v[k][j] -= sigma*q[k][i]
 \end{verbatim}
 
-For the direct parallelization we parallelize the for:
+For the direct parallelization (using the \textit{for} directive), we parallelize the second for loop:
 \begin{verbatim}
 for j from i+1 in col
 \end{verbatim}
 
-In the task parallelization we use \verb+#pragma omp single+ before the first loop:
+We chose to parallelize that loop because it is perfectly parallel. Indeed, 
+if we consider $i$ as being a constant, we can see that each iteration in the $j$-loop can be made alone. This is not the case with the outer-most loop.Indeed, the $j$-loop uses data that were computed in a previous iteration of the $i$-loop. Therefore, it is not possible to parallelize that loop.\\ 
+
+In the task parallelization, we use \verb+#pragma omp single+ before the first loop:
 \begin{verbatim}
 for i in column
 \end{verbatim}
 
-and we add the task directive \verb+ #pragma omp task private(j, sigma, k, temp_norm)+ in the \verb+for i in column+ loop.
+and we add the task directive \verb+ #pragma omp task private(j, sigma, k, temp_norm)+ inside the body of the $i$-loop.
