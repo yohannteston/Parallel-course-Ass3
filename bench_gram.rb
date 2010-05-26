@@ -17,7 +17,6 @@
 
 		ENV['OMP_NUM_THREADS'] = "#{n}" ;
 		10.times {
-			system "export OMP_NUM_THREAD=#{n}"
 			out = `./gram_schmidt #{size} #{size}` 
 			out_split = out.split " " ;
 			if(out_split[1].to_f < min_time)
