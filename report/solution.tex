@@ -17,14 +17,6 @@ for i in column
             v[k][j] -= sigma*q[k][i]
 \end{verbatim}
 
-For the direct parallelization we parallelize the for:
-\begin{verbatim}
-for j from i+1 in col
-\end{verbatim}
+For the direct parallelization we parallelize the for: \verb*for j from i+1 in col*.  We can not parallelize the main loop since we need the value of q in $i-1$.
 
-In the task parallelization we use \verb+#pragma omp single+ before the first loop:
-\begin{verbatim}
-for i in column
-\end{verbatim}
-
-and we add the task directive \verb+ #pragma omp task private(j, sigma, k, temp_norm)+ in the \verb+for i in column+ loop.
+In the task parallelization we use \verb+#pragma omp single+ before the main loop. And we add the task directive \verb+ #pragma omp task private(j, sigma, k, temp_norm)+ in the \verb+for i in column+ loop.
