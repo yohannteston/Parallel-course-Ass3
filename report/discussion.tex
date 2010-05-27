@@ -16,3 +16,12 @@ Since we had already data for the pthread implementation of gram, we have compar
 
 We see that the OpenMP implementation is equivalent to the pthread one.
 (if we do not consider matrices of $10\times 10$ wich are not really relevent du to the massive overhead).
+
+
+\subsection{Parallelization using the {task}
+
+Those results are explained by the overheads related to task creation. Indeed, the master thread create a lot of small tasks for each iteration. Such operation is very time consuming as OpenMP has to create the data environment of the task, put it in the queue and manage the scheduling.  These tasks must also be joined before continuing with the next iteration of the outermost loop. Of course, this synchronization step takes some time, time that is not used efficiently doing some useful computations.\\
+
+This quite big amount of overhead explains why we got those bad results. Indeed, the best speedup achieved is about 2.5, which is not really good.\\
+
+The results' stagnation is due to the fact that passed a certain number of threads, we do not benefit from having more of them because the overhead becomes too important compared to the computation time. So, an increasing speedup cannot be achieved anymore.
