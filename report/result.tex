@@ -31,7 +31,9 @@ Since we already had the data of the Pthread implementation of the Gram-Schmidt'
   \label{fig:gram_pthread}
 \end{figure} 
 
-As can be seen in the diagram, the ratio tends towards 1, which indicates that the results are similar. This is not very surprising as both programs are parallelized the same way. 
+As can be seen in the diagram, the ratio tends towards 1, which indicates that the results are similar. This is not very surprising as both programs are parallelized the same way.\\
+
+It is so because the threads are created and joined for each iteration of the outermost loop. It means we have to go through the quite costly process of creating threads very often, without forgetting the synchronization step at the end of the parallelized loop where threads are joined. This creates a huge overhead because a lot of time is spent not doing any useful computation.
 
 \section{Parallelization using the \textit{task} directive}
 
@@ -45,13 +47,13 @@ As can be seen in the diagram, the ratio tends towards 1, which indicates that t
   \label{fig:gram_speedup_task}
 \end{figure} 
 
-As shown by the figure \ref{gram_speedup_task}, the behavior of the algorithm parallelized in that way is quite surprising as the speedup increases only for a few threads and stagnates when the treshold of 8 threads is reached, no matter the size of the data.\\
+As shown by the figure \ref{fig:gram_speedup_task}, the behavior of the algorithm parallelized in that way is quite surprising as the speedup increases only for a few threads and stagnates when the treshold of 8 threads is reached, no matter the size of the data.\\
 
 This observation is only accurate for a reasonable amount of data. If this is not the case, the speedup quickly drops below 1.\\
 
 \subsection{Discussion}
 
-Those results are explained by the overheads related to task creation. Indeed, the master thread create a lot of small tasks for each iteration. Such operation is very time consuming as OpenMP has to create the data environment of the task, put it in the queue and manage the scheduling.  These tasks must also be joined before continuing with the next iteration of the outermost loop. Of course, this synchronization step takes some time, time that is not used efficiently doing some useful computations.\\
+Those results are explained by the overheads related to task creation. Indeed, the master thread create a lot of small tasks for each iteration. Such operation is very time consuming as OpenMP has to create the data environment of the task, put it in the queue and manage the scheduling.  These tasks must also be joined before continuing with the next iteration of the outermost loop. Of course, this synchronization step takes some time, time that is not used efficiently doing some useful computation.\\
 
 This quite big amount of overhead explains why we got those bad results. Indeed, the best speedup achieved is about 2.5, which is not really good.\\
 
