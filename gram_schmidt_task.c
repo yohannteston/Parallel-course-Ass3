@@ -70,7 +70,7 @@ int main(int argc, char** argv){
 		exit(-1);
 	}		
 
-	int k,i,j,ttime;
+	int l,k,i,j,ttime;
 
 	v = alloc_matrix(row, col);
 	q = alloc_matrix(row, col);
@@ -81,29 +81,34 @@ int main(int argc, char** argv){
 
 	// compute
 	ttime=timer();
+	temp_norm = vecNorm(v[1],col);
+	for(k=0;k<col;k++)
+		q[1][k] = v[1][k]/temp_norm;
+
+	for(i=1;i<row;i++){	
 
 #pragma omp parallel
-{
-#pragma omp single
-	{
-		for(i=0;i<row;i++){
-#pragma omp task private(temp_norm,k,j, sigma) firstprivate(i)
-			{		
-				temp_norm = vecNorm(v[i],col);
-				for (k=0; k<col; k++)
-					q[i][k] = v[i][k]/temp_norm;
-				for(j=i+1;j<row;j++){
-					sigma = scalarProd(q[i], v[j], col);
-					for(k=0;k<col;k++)
-						v[j][k] -=sigma*q[i][k];
+		{
+#pragma omp single private(j,k,sigma)
+			{
+				for(j=i;j<row;j++){
+#pragma omp task private(k,sigma) firstprivate(j)
+					{
+						sigma = scalarProd(q[i-1],v[j],col);
+						for(k=0;k<col;k++){
+							v[j][k] -= sigma*q[i-1][k]; 
+						}	
+					}
 				}
 			}
 		}
+		temp_norm = vecNorm(v[i],col);
+		for(k=0;k<col;k++)
+			q[i][k] = v[i][k]/temp_norm;
 	}
-}
 
 	ttime=timer()-ttime;
 	printf("Time: %f \n",ttime/1000000.0);
-//	printf("Check orthogonality: %e \n",scalarProd(q[col/2],  q[col/3], row));
+	printf("Check orthogonality: %e \n",scalarProd(q[col/2],  q[col/3], row));
 
 }
