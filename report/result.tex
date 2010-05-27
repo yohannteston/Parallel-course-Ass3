@@ -1,16 +1,35 @@
 \chapter{Results and discussion}
 
-\section{Direct Gram-Schmidt ortogonalization}
+\section{Parallelization using the \textit{for} directive}
 
 \begin{figure}[ht]
   \begin{center}
          \resizebox{160mm}{!}{\includegraphics{pic/graph_gram.eps}}
   \end{center}
-  \caption{Gram-Schmidt speedup}
+  \caption{Gram-Schmidt speedup using the \textit{for} directive}
   \label{fig:gram_speedup}
 \end{figure} 
 
-As usual with very small matrix there is absolutely no speedup. The first speedup is obtain with a matrix of $300\times 300$ but it's decrease immediately below 1. Matrix from $600\times 600$ to $1000\times 1000$ follow the same pattern with a big speedup for a low number of thread (8) and a decrease just after. $1500\times 1500$ matrix have an odd speedup with 64 threads.
+As usual with very small matrices there is absolutely no speedup. The first speedup is obtained with a matrix of $300\times 300$ elements but it decreases immediately below 1. Matrices from $600\times 600$ to $1000\times 1000$ elements follow the same pattern with a big speedup for a low number of threads (8) and a decrease just after. The $1500\times 1500$ elements matrix has an odd speedup with 64 threads.
 
-Finally the $2000\times 2000$ matrix have the max speedup for 16 threads and slowly decrease, after but stay on top of the other speedup. This is because the ratio data/overhead is bigger for the same number of thread, so there is relatively less overhead.
+Finally, the $2000\times 2000$ matrix has the max speedup for 16 threads and slowly decreases just after but stays on top of the other speedups. This is because the ratio data/overhead is better for the same number of threads, so there is relatively less overhead.
 
+\section{Parallelization using the \textit{task} directive}
+
+\begin{figure}[ht]
+  \begin{center}
+         \resizebox{160mm}{!}{\includegraphics{pic/graph_task.eps}}
+  \end{center}
+  \caption{Gram-Schmidt speedup using tasks}
+  \label{fig:gram_speedup_task}
+\end{figure} 
+
+The behavior of the algorithm parallelized in that way is quite surprising as the speedup increases only for a few threads and stagnates when the treshold of 8 threads is reached, no matter the size of the data.\\
+
+This observation is only accurate for a reasonable amount of data. If this is not the case, the speedup quickly drops below 1.\\
+
+Those results are explained by the overheads related to task creation. Indeed, the master thread create a lot of small tasks for each iteration. Such operation is very time consuming as OpenMP has to create the data environment of the task, put it in the queue and manage the scheduling.  These tasks must also be joined before continuing with the next iteration of the outermost loop. Of course, this synchronization step takes some time, time that is not used efficiently doing some useful computations.\\
+
+This quite big amount of overhead explains why we got those bad results. Indeed, the best speedup achieved is about 2.5, which is not really good.\\
+
+The results' stagnation is due to the fact that passed a certain number of threads, we do not benefit from having more of them because the overhead becomes too important compared to the computation time. So, an increasing speedup cannot be achieved anymore.

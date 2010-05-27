@@ -1,22 +1,26 @@
 \chapter{Solution method}
 
-The program take two argument, the row and the col.
+\section{The code}
 
-\begin{verbatim}
-test the argument
+The program implementing the Gram-Schmidt's algorithm, and used in both parts of the assignment, is a direct translation of the given pseudo code. The program takes two arguments, the length of a vector et their number.\\
 
-for i in column
-    tmp = norm (v, i, row)
+The code for each part can be found in the appendixes.
 
-	 for k in row
-        q[k][i] = v[k][i]/tmp
+\section{Parallelization using the \textit{for} directive}
 
-    for j from i+1 in col
-        sigma = scalar_product(q,i,v,j,row)
-        for k in row
-            v[k][j] -= sigma*q[k][i]
-\end{verbatim}
+In this part of the assignment, we parallelized the $j$-loop using the \textit{for} directive. The code can be found in the appendix \ref{for}.
 
-For the direct parallelization we parallelize the for: \verb*for j from i+1 in col*.  We can not parallelize the main loop since we need the value of q in $i-1$.
+%For the direct parallelization we parallelize the for: \verb*for j from i+1 in col*.  We can not parallelize the main loop since we need the value of q in $i-1$.
 
-In the task parallelization we use \verb+#pragma omp single+ before the main loop. And we add the task directive \verb+ #pragma omp task private(j, sigma, k, temp_norm)+ in the \verb+for i in column+ loop.
+%In the task parallelization we use \verb+#pragma omp single+ before the main loop. And we add the task directive \verb+ #pragma omp task private(j, sigma, k, temp_norm)+ in the \verb+for i in column+ loop.
+
+We chose to parallelize that loop because it is the only one to be perfectly parallel. Indeed, if we consider $i$ as being a constant, we can see that each iteration in the $j$-loop can be made alone. This is not the case with the outermost loop, or $i$-loop. Indeed, the $j$-loop uses data that were computed in a previous iteration of the $i$-loop. Therefore, each iteration of this loop needs to be done before the next can begin. It is then impossible to parallelize it.\\ 
+
+\section{Parallelization using \textit{task} directive}
+
+This part has been solved using the \textit{parallel}, \textit{single} and \textit{task} directives. The code can be found in the appendix \ref{task}.\\
+
+Like we did earlier, the threads are spawned for each iteration of the $i$-loop, thanks to the \textit{parallel} directive this time. Then, we use the text{single} directive to make sure only one thread (the master thread) will create the tasks. The other threads are then scheduled to execute the newly created tasks.\\ 
+
+The task is defined as being the content of the innermost loop, the same we parallelized in the previous part. \\
+>>>>>>> b6504481d24820f6f1980bb8340c7cb579866685

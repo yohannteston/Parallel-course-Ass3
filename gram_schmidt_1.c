@@ -62,14 +62,15 @@ int main(int argc, char** argv){
 	double temp_norm, sigma;
 
 	int row = atoi(argv[1]);
+	//int col = row;
 	int col = atoi(argv[2]);
 
 	if(row < col){
-		printf("Can not create an orthogonal base with such values\n");
+		printf("It is not possible to create an orthogonal base with such values. \n");
 		exit(-1);
 	}		
 
-	int l,k,i,j,ttime;
+	int k,i,j,ttime;
 
 	v = alloc_matrix(row, col);
 	q = alloc_matrix(row, col);
@@ -80,34 +81,25 @@ int main(int argc, char** argv){
 
 	// compute
 	ttime=timer();
-	temp_norm = vecNorm(v[1],col);
-	for(k=0;k<col;k++)
-		q[1][k] = v[1][k]/temp_norm;
 
-	for(i=1;i<row;i++){	
 
-#pragma omp parallel
-		{
-#pragma omp single private(j,k,sigma)
-			{
-				for(j=i;j<row;j++){
-#pragma omp task private(k,sigma) firstprivate(j)
-					{
-						sigma = scalarProd(q[i-1],v[j],col);
-						for(k=0;k<col;k++){
-							v[j][k] -= sigma*q[i-1][k]; 
-						}	
-					}
-				}
-			}
-		}
+	for(i=0;i<row;i++){
 		temp_norm = vecNorm(v[i],col);
-		for(k=0;k<col;k++)
+		for (k=0; k<col; k++)
 			q[i][k] = v[i][k]/temp_norm;
+		#pragma omp parallel for private(temp_norm, k, j, sigma) schedule(static)
+		for(j=i+1;j<row;j++){
+			sigma = scalarProd(q[i], v[j], col);
+			for(k=0;k<col;k++)
+				v[j][k] -=sigma*q[i][k];
+		}
 	}
+
+
+
 
 	ttime=timer()-ttime;
 	printf("Time: %f \n",ttime/1000000.0);
-	printf("Check orthogonality: %e \n",scalarProd(q[col/2],  q[col/3], row));
+	//printf("Check orthogonality: %e \n",scalarProd(q[col/2],  q[col/3], row));
 
 }
