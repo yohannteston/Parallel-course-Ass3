@@ -4,7 +4,7 @@
 # For each size and each number of thread launch 20 times
 # the program and keep the least time.
 
-[10,100,300,600,800,1000,1500,2000].each_with_index do |size, i|
+[3000, 4000, 5000].each_with_index do |size, i|
 	if (i > 0)
 		puts "\n\n";
 	end

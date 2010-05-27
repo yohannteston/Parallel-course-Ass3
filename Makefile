@@ -6,11 +6,8 @@ LIBS 	= -lm
 
 all: gram_schmidt gram_schmidt_task
 
-gram: gram1.c
-	$(CC) $(CFLAGS) -o gram gram1.c $(LIBS)
-
 gram_schmidt: gram_schmidt.c
-	$(CC) $(CFLAGS) -o gram_schmidt gram_schmidt.c $(LIBS)
+	$(CC) $(CFLAGS) -o gram_schmidt new_gram_schmidt.c $(LIBS)
 
 gram_schmidt_task: gram_schmidt_task.c
 	$(CC2) $(CFLAGS2) -o gram_schmidt_task gram_schmidt_task.c $(LIBS)
