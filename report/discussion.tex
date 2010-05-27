@@ -1,1 +1,18 @@
 \section{Discussion}
+
+\subsection{Parallelization using the \textit{for} directive}
+
+The Openmp data obtained lead to the same conclusion as the last report: the overhead have to be carefully handled to assure a good use of the processor time.\\
+
+Since we had already data for the pthread implementation of gram, we have compared the data of openmp with the one we get during the pthread lab. Taking pthread has a reference we draw the graph \ref{fig:gram_pthread} page \pageref{fig:gram_pthread}. Wich represent the speedup of OpenMP with pthread has reference.
+
+\begin{figure}[ht]
+  \begin{center}
+         \resizebox{160mm}{!}{\includegraphics{pic/graph_lab2.eps}}
+  \end{center}
+  \caption{Gram-Schmidt Openmp comparison speedup with pthread}
+  \label{fig:gram_pthread}
+\end{figure} 
+
+We see that the OpenMP implementation is equivalent to the pthread one.
+(if we do not consider matrices of $10\times 10$ wich are not really relevent du to the massive overhead).
