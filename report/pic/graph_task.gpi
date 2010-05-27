@@ -1,0 +1,14 @@
+set title "Gram-Schimdt orthogonalization speedup using tasks"
+set ylabel "Speedup"
+set xlabel "Threads"
+set grid
+set terminal postscript enhanced "Helvetica" 12
+plot "pic/data_task.dat" index 0:0 using 2:($3/$4) ti "10" with linespoints,\
+"pic/data_task.dat" index 1 using 2:($3/$4) with linespoints ti "100",\
+"pic/data_task.dat" index 2 using 2:($3/$4) with linespoints ti "300",\
+"pic/data_task.dat" index 3 using 2:($3/$4) with linespoints ti "600",\
+"pic/data_task.dat" index 4 using 2:($3/$4) with linespoints ti "800",\
+"pic/data_task.dat" index 5 using 2:($3/$4) with linespoints ti "1000",\
+"pic/data_task.dat" index 6 using 2:($3/$4) with linespoints ti "1500"#,\
+#"pic/data_task.dat" index 7 using 2:($3/$4) with linespoints ti "2000"
+
