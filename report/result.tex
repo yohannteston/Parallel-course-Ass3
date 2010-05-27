@@ -1,12 +1,12 @@
 \chapter{Results and discussion}
 
-\section{Gram-Schmidt orthogonalization using the \textit{for} directive}
+\section{Parallelization using the \textit{for} directive}
 
 \begin{figure}[ht]
   \begin{center}
          \resizebox{160mm}{!}{\includegraphics{pic/graph_gram.eps}}
   \end{center}
-  \caption{Gram-Schmidt speedup}
+  \caption{Gram-Schmidt speedup using the \textit{for} directive}
   \label{fig:gram_speedup}
 \end{figure} 
 
@@ -14,7 +14,7 @@ As usual with very small matrices there is absolutely no speedup. The first spee
 
 Finally, the $2000\times 2000$ matrix has the max speedup for 16 threads and slowly decreases just after but stays on top of the other speedups. This is because the ratio data/overhead is better for the same number of threads, so there is relatively less overhead.
 
-\section{Gram-Schmidt orthogonalization using the \textit{task} directive}
+\section{Parallelization using the \textit{task} directive}
 
 \begin{figure}[ht]
   \begin{center}
@@ -24,12 +24,12 @@ Finally, the $2000\times 2000$ matrix has the max speedup for 16 threads and slo
   \label{fig:gram_speedup_task}
 \end{figure} 
 
-\begin{figure}[ht]
-  \begin{center}
-         \resizebox{160mm}{!}{\includegraphics{pic/graph_task_2.eps}}
-  \end{center}
-  \caption{Gram-Schmidt speedup using tasks}
-  \label{fig:gram_speedup_task_2}
-\end{figure} 
+The behavior of the algorithm parallelized in that way is quite surprising as the speedup increases only for a few threads and stagnates when the treshold of 8 threads is reached, no matter the size of the data.\\
 
+This observation is only accurate for a reasonable amount of data. If this is not the case, the speedup quickly drops below 1.\\
 
+Those results are explained by the overheads related to task creation. Indeed, the master thread create a lot of small tasks for each iteration. Such operation is very time consuming as OpenMP has to create the data environment of the task, put it in the queue and manage the scheduling.  These tasks must also be joined before continuing with the next iteration of the outermost loop. Of course, this synchronization step takes some time, time that is not used efficiently doing some useful computations.\\
+
+This quite big amount of overhead explains why we got those bad results. Indeed, the best speedup achieved is about 2.5, which is not really good.\\
+
+The results' stagnation is due to the fact that passed a certain number of threads, we do not benefit from having more of them because the overhead becomes too important compared to the computation time. So, an increasing speedup cannot be achieved anymore.
