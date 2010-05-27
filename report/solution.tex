@@ -10,6 +10,10 @@ The code for each part can be found in the appendixes.
 
 In this part of the assignment, we parallelized the $j$-loop using the \textit{for} directive. The code can be found in the appendix \ref{for}.
 
+%For the direct parallelization we parallelize the for: \verb*for j from i+1 in col*.  We can not parallelize the main loop since we need the value of q in $i-1$.
+
+%In the task parallelization we use \verb+#pragma omp single+ before the main loop. And we add the task directive \verb+ #pragma omp task private(j, sigma, k, temp_norm)+ in the \verb+for i in column+ loop.
+
 We chose to parallelize that loop because it is the only one to be perfectly parallel. Indeed, if we consider $i$ as being a constant, we can see that each iteration in the $j$-loop can be made alone. This is not the case with the outermost loop, or $i$-loop. Indeed, the $j$-loop uses data that were computed in a previous iteration of the $i$-loop. Therefore, each iteration of this loop needs to be done before the next can begin. It is then impossible to parallelize it.\\ 
 
 \section{Parallelization using \textit{task} directive}

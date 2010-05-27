@@ -2,6 +2,8 @@
 
 \section{Parallelization using the \textit{for} directive}
 
+\subsection{Results}
+
 \begin{figure}[ht]
   \begin{center}
          \resizebox{160mm}{!}{\includegraphics{pic/graph_gram.eps}}
@@ -10,11 +12,37 @@
   \label{fig:gram_speedup}
 \end{figure} 
 
-As usual with very small matrices there is absolutely no speedup. The first speedup is obtained with a matrix of $300\times 300$ elements but it decreases immediately below 1. Matrices from $600\times 600$ to $1000\times 1000$ elements follow the same pattern with a big speedup for a low number of threads (8) and a decrease just after. The $1500\times 1500$ elements matrix has an odd speedup with 64 threads.
+As usual with very small matrices, there is absolutely no speedup. The first speedup is obtained with a matrix of $600\times 600$ elements but it decreases immediately below 1. The $1500\times 1500$ elements matrix also has a big speedup followed by a quick decrease but it stays slightly above 1.
+Starting from $2000\times 2000$ elements we see a speedup which stays around 1.75 to 2 for any number of threads.
 
-Finally, the $2000\times 2000$ matrix has the max speedup for 16 threads and slowly decreases just after but stays on top of the other speedups. This is because the ratio data/overhead is better for the same number of threads, so there is relatively less overhead.
+%Finally, the $2000\times 2000$ matrix has the max speedup for 16 threads and slowly decreases just after but stays on top of the other speedups. This is because the ratio data/overhead is better for the same number of threads, so there is relatively less overhead.
+
+\subsection{Discussion}
+
+The data obtained using OpenMP lead to the same conclusion we drew in the Pthread lab: the overhead has to be carefully handled to assure a good use of the processor time. In our case we can see that the maximum speedup is quickly achieved (between 4 and 16 threads) and after that we stay close to a constant speedup.\\
+
+Since we already had the data of the Pthread implementation of the Gram-Schmidt's
+algorithm, we have compared the data we got with OpenMP with those we got during the
+Pthread lab. Taking Pthread has reference, we drew the graph \ref{fig:gram_pthread}
+page \pageref{fig:gram_pthread}, which represents the relative speedup of OpenMP using the
+values from the Pthread lab as reference. We have chosen the data got by running the
+program named gram2 because it is the same thing as the OpenMP program we are currently discussing.
+
+\begin{figure}[ht]
+  \begin{center}
+         \resizebox{160mm}{!}{\includegraphics{pic/graph_lab2.eps}}
+  \end{center}
+  \caption{Comparing OpenMP and Pthread results}
+  \label{fig:gram_pthread}
+\end{figure} 
+
+As can be seen in the diagram, the ratio tends towards 1, which indicates that the results are similar. This is not very surprising as both programs are parallelized the same way.\\
+
+It is so because the threads are created and joined for each iteration of the outermost loop. It means we have to go through the quite costly process of creating threads very often, without forgetting the synchronization step at the end of the parallelized loop where threads are joined. This creates a huge overhead because a lot of time is spent not doing any useful computation.
 
 \section{Parallelization using the \textit{task} directive}
+
+\subsection{Results}
 
 \begin{figure}[ht]
   \begin{center}
@@ -24,11 +52,13 @@ Finally, the $2000\times 2000$ matrix has the max speedup for 16 threads and slo
   \label{fig:gram_speedup_task}
 \end{figure} 
 
-The behavior of the algorithm parallelized in that way is quite surprising as the speedup increases only for a few threads and stagnates when the treshold of 8 threads is reached, no matter the size of the data.\\
+As shown by the figure \ref{fig:gram_speedup_task}, the behavior of the algorithm parallelized in that way is quite surprising as the speedup increases only for a few threads and stagnates when the treshold of 8 threads is reached, no matter the size of the data.\\
 
 This observation is only accurate for a reasonable amount of data. If this is not the case, the speedup quickly drops below 1.\\
 
-Those results are explained by the overheads related to task creation. Indeed, the master thread create a lot of small tasks for each iteration. Such operation is very time consuming as OpenMP has to create the data environment of the task, put it in the queue and manage the scheduling.  These tasks must also be joined before continuing with the next iteration of the outermost loop. Of course, this synchronization step takes some time, time that is not used efficiently doing some useful computations.\\
+\subsection{Discussion}
+
+Those results are explained by the overheads related to task creation. Indeed, the master thread create a lot of small tasks for each iteration. Such operation is very time consuming as OpenMP has to create the data environment of the task, put it in the queue and manage the scheduling.  These tasks must also be joined before continuing with the next iteration of the outermost loop. Of course, this synchronization step takes some time, time that is not used efficiently doing some useful computation.\\
 
 This quite big amount of overhead explains why we got those bad results. Indeed, the best speedup achieved is about 2.5, which is not really good.\\
 

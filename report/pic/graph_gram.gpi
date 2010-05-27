@@ -10,5 +10,6 @@ plot "pic/data_gram.dat" index 0:0 using 2:($3/$4) ti "10" with linespoints,\
 "pic/data_gram.dat" index 4 using 2:($3/$4) with linespoints ti "800",\
 "pic/data_gram.dat" index 5 using 2:($3/$4) with linespoints ti "1000",\
 "pic/data_gram.dat" index 6 using 2:($3/$4) with linespoints ti "1500",\
-"pic/data_gram.dat" index 7 using 2:($3/$4) with linespoints ti "2000"
+"pic/data_gram.dat" index 7 using 2:($3/$4) with linespoints ti "2000",\
+"pic/data_gram.dat" index 8 using 2:($3/$4) with linespoints ti "3000"
 

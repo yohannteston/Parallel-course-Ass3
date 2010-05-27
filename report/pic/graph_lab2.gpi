@@ -1,0 +1,11 @@
+set title "Gram-Schimdt openmp comparison speedup with pthread"
+set ylabel "Speedup"
+set xlabel "Threads"
+set grid
+set terminal postscript enhanced "Helvetica" 12
+plot "pic/data_lab2.dat" index 0:0 using 2:($3/$4) ti "10" with linespoints,\
+"pic/data_lab2.dat" index 1 using 2:($4/$5) with linespoints ti "100",\
+"pic/data_lab2.dat" index 2 using 2:($4/$5) with linespoints ti "1000",\
+"pic/data_lab2.dat" index 3 using 2:($4/$5) with linespoints ti "2000",\
+"pic/data_lab2.dat" index 4 using 2:($4/$5) with linespoints ti "3000"
+
