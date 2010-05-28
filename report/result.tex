@@ -19,9 +19,14 @@ Starting from $2000\times 2000$ elements we see a speedup which stays around 1.7
 
 \subsection{Discussion}
 
-The data obtained using OpenMP lead to the same conclusion we drew in the Pthread lab: the overhead has to be carefully handled to assure a good use of the processor time.\\
+The data obtained using OpenMP lead to the same conclusion we drew in the Pthread lab: the overhead has to be carefully handled to assure a good use of the processor time. In our case we can see that the maximum speedup is quickly achieved (between 4 and 16 threads) and after that we stay close to a constant speedup.\\
 
-Since we already had the data of the Pthread implementation of the Gram-Schmidt's algorithm, we have compared the data we got with OpenMP with those we got during the Pthread lab. Taking Pthread has reference, we drew the graph \ref{fig:gram_pthread} page \pageref{fig:gram_pthread}, which represents the speedup of OpenMP using the values from the Pthread lab as reference. We have chosen the data got by running the program named gram2 because it is the same thing as the OpenMP program we are currently discussing.
+Since we already had the data of the Pthread implementation of the Gram-Schmidt's
+algorithm, we have compared the data we got with OpenMP with those we got during the
+Pthread lab. Taking Pthread has reference, we drew the graph \ref{fig:gram_pthread}
+page \pageref{fig:gram_pthread}, which represents the relative speedup of OpenMP using the
+values from the Pthread lab as reference. We have chosen the data got by running the
+program named gram2 because it is the same thing as the OpenMP program we are currently discussing.
 
 \begin{figure}[ht]
   \begin{center}
