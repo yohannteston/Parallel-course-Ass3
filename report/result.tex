@@ -58,3 +58,7 @@ Those results are explained by the overheads related to task creation. Indeed, t
 This quite big amount of overhead explains why we got those bad results. Indeed, the best speedup achieved is about 2.5, which is not really good.\\
 
 The results' stagnation is due to the fact that passed a certain number of threads, we do not benefit from having more of them because the overhead becomes too important compared to the computation time. So, an increasing speedup cannot be achieved anymore.
+
+\section{Comparison}
+
+The second attempt to parallelize the Gram-Schmidt's algorithm, using the \textit{task} directive that time, gets slightly better results than the first one. Indeed, we create a lot of small tasks that are then scheduled among the threads. When the tasks are created by the master thread, all slaves threads are already created (this is done by the \textit{parallel} directive), so they can start working immediately while the master continues its work of task creation. That way, actual computation overlaps with the time spent creating task. So, it becomes possible to achieve better results. There is no such overlapping using the \textit{for} directive, hence the bad results.
