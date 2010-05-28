@@ -66,7 +66,7 @@ int main(int argc, char** argv){
 	int col = atoi(argv[2]);
 
 	if(row < col){
-		printf("It is not possible to create an orthogonal base with such values. \n");
+		printf("Can not create an orthogonal base with such values. \n");
 		exit(-1);
 	}		
 
